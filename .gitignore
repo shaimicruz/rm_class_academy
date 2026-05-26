@@ -1,0 +1,21 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Local env / secrets
+db_local.php
+*.env
+
+# Uploads / generated content
+uploads/
+uploads_clases/
+assets/*.psd
+
+# Backups / exports
+*.sql
+*.zip
+ultimo_codigo_recuperacion.txt
+
+# Node / PHP deps (if added later)
+node_modules/
+vendor/
