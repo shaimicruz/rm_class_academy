@@ -4,8 +4,10 @@ $rol = $_SESSION['rol'] ?? '';
 $pagina_actual = basename($_SERVER['PHP_SELF']);
 $usuario_id = intval($_SESSION['usuario_id'] ?? 0);
 $nombre_usuario = trim((string)($_SESSION['nombre'] ?? 'Usuario'));
+
 $foto_perfil = '';
-$classroom_label = 'Classroom general';
+$foto_perfil_url = '';
+$classroom_label = 'Sin grado';
 
 function esActivo($paginas, $actual) {
     $paginas = is_array($paginas) ? $paginas : [$paginas];
@@ -23,6 +25,11 @@ if (isset($conexion) && $usuario_id > 0) {
             $foto_perfil = trim((string)($row_user['foto_perfil'] ?? ''));
         }
     }
+}
+
+if ($foto_perfil !== '') {
+    // En BD guardamos solo el nombre del archivo; la ruta real está en uploads/perfiles/.
+    $foto_perfil_url = 'uploads/perfiles/' . rawurlencode($foto_perfil);
 }
 
 if ($rol === 'estudiante' && isset($conexion) && $usuario_id > 0) {
@@ -71,12 +78,14 @@ if ($rol === 'estudiante' && isset($conexion) && $usuario_id > 0) {
     <a class="logo logo-only" href="<?php echo $rol === 'admin' ? 'admin_dashboard.php' : ($rol === 'tutor' ? 'tutor_dashboard.php' : 'estudiante_dashboard.php'); ?>" aria-label="Inicio">
         <img src="assets/logo.png" alt="" class="logo-img">
     </a>
+
     <div class="user-box">
-        <?php if ($foto_perfil !== ''): ?>
-            <img class="user-avatar" src="<?php echo htmlspecialchars($foto_perfil); ?>" alt="Foto de perfil">
+        <?php if ($foto_perfil_url !== ''): ?>
+            <img class="user-avatar" src="<?php echo htmlspecialchars($foto_perfil_url); ?>" alt="Foto de perfil">
         <?php else: ?>
             <div class="user-avatar user-avatar-fallback"><?php echo strtoupper(substr($nombre_usuario, 0, 1)); ?></div>
         <?php endif; ?>
+
         <div class="user-meta">
             <strong><?php echo htmlspecialchars($nombre_usuario); ?></strong>
             <small><?php echo htmlspecialchars(ucfirst($rol)); ?></small>
@@ -120,3 +129,4 @@ if ($rol === 'estudiante' && isset($conexion) && $usuario_id > 0) {
         <?php endif; ?>
     </nav>
 </aside>
+
