@@ -156,7 +156,7 @@ $tipo_actual = ($anuncio['para_todos'] == 1) ? "todos" : "grado";
                 </div>
 
                 <div class="grupo-form">
-                    <label>Ã‚¿Para quién es el anuncio?</label>
+                    <label>¿Para quién es el anuncio?</label>
                     <select name="tipo_destino" id="tipo_destino" onchange="mostrarGrados()" required>
                         <option value="todos" <?php if ($tipo_actual == "todos") echo "selected"; ?>>
                             Para todos los estudiantes

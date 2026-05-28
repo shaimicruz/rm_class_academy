@@ -46,24 +46,24 @@ if (isset($_SESSION['usuario_id'])) {
 
             <?php if (isset($_GET['registro']) && $_GET['registro'] == 'ok') { ?>
                 <div class="mensaje-exito">
-                    Registro realizado correctamente. Ya puedes iniciar sesiÃ³n.
+                    Registro realizado correctamente. Ya puedes iniciar sesión.
                 </div>
             <?php } ?>
 
             <?php if (isset($_GET['correo']) && $_GET['correo'] == 'existe') { ?>
                 <div class="mensaje-error">
-                    Ese correo ya estÃ¡ registrado.
+                    Ese correo ya está registrado.
                 </div>
             <?php } ?>
 
             <?php if (isset($_GET['error_matricula']) && $_GET['error_matricula'] == '1') { ?>
-                <div class="mensaje-error">La matrÃ­cula del estudiante no es vÃ¡lida o no existe.</div>
+                <div class="mensaje-error">La matrícula del estudiante no es válida o no existe.</div>
             <?php } ?>
             <?php if (isset($_GET['error_pendiente']) && $_GET['error_pendiente'] == '1') { ?>
-                <div class="mensaje-error">Tu cuenta estÃ¡ pendiente de aprobaciÃ³n por la administraciÃ³n.</div>
+                <div class="mensaje-error">Tu cuenta está pendiente de aprobación por la administración.</div>
             <?php } ?>
             <?php if (isset($_GET['mensaje']) && $_GET['mensaje'] == 'clave_actualizada') { ?>
-                <div class="mensaje-exito">Contraseña actualizada exitosamente. Ahora puedes iniciar sesiÃ³n.</div>
+                <div class="mensaje-exito">Contraseña actualizada exitosamente. Ahora puedes iniciar sesión.</div>
             <?php } ?>
             <?php if (isset($_GET['error_codigo'])) { ?>
                 <div class="mensaje-error">
@@ -158,11 +158,11 @@ if (isset($_SESSION['usuario_id'])) {
                         <button type="button" class="toggle-password" data-target="clave_registro" aria-label="Mostrar contraseña">Mostrar</button>
                     </div>
                     <div class="requisitos-clave" id="requisitos_clave">
-                        <span id="req_longitud" class="req-invalido">âœ— Mínimo 8 caracteres</span><br>
-                        <span id="req_mayuscula" class="req-invalido">âœ— Una mayúscula</span><br>
-                        <span id="req_minuscula" class="req-invalido">âœ— Una minúscula</span><br>
-                        <span id="req_numero" class="req-invalido">âœ— Un número</span><br>
-                        <span id="req_especial" class="req-invalido">âœ— Un carácter especial (@$!%*?&)</span>
+                        <span id="req_longitud" class="req-invalido" data-label="Mínimo 8 caracteres">NO - Mínimo 8 caracteres</span><br>
+                        <span id="req_mayuscula" class="req-invalido" data-label="Una mayúscula">NO - Una mayúscula</span><br>
+                        <span id="req_minuscula" class="req-invalido" data-label="Una minúscula">NO - Una minúscula</span><br>
+                        <span id="req_numero" class="req-invalido" data-label="Un número">NO - Un número</span><br>
+                        <span id="req_especial" class="req-invalido" data-label="Un carácter especial (@$!%*?&)">NO - Un carácter especial (@$!%*?&)</span>
                     </div>
                 </div>
 
@@ -241,7 +241,7 @@ if (isset($_SESSION['usuario_id'])) {
 
             if (rol === 'estudiante') {
                 grupoCodigo.style.display = 'block';
-                inputCodigo.required = true;
+                inputCodigo.required = false;
             } else {
                 grupoCodigo.style.display = 'none';
                 inputCodigo.required = false;
@@ -253,7 +253,7 @@ if (isset($_SESSION['usuario_id'])) {
             this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
         });
 
-        // ValidaciÃ³n de contraseña en tiempo real
+        // Validación de contraseña en tiempo real
         function validarClave() {
             const clave = document.getElementById('clave_registro').value;
             const reqContainer = document.getElementById('requisitos_clave');
@@ -274,14 +274,17 @@ if (isset($_SESSION['usuario_id'])) {
 
             requisitos.forEach(req => {
                 const elemento = document.getElementById(req.id);
-                if (req.regex.test(clave)) {
+                const ok = req.regex.test(clave);
+                const label = elemento?.dataset?.label || '';
+                if (ok) {
                     elemento.classList.remove('req-invalido');
                     elemento.classList.add('req-valido');
-                    elemento.textContent = elemento.textContent.replace('âœ—', 'âœ“');
                 } else {
                     elemento.classList.remove('req-valido');
                     elemento.classList.add('req-invalido');
-                    elemento.textContent = elemento.textContent.replace('âœ“', 'âœ—');
+                }
+                if (label) {
+                    elemento.textContent = (ok ? 'OK - ' : 'NO - ') + label;
                 }
             });
         }

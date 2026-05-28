@@ -4,6 +4,22 @@ require_once "conexion.php";
 
 protegerPagina("admin");
 
+$grados = $conexion->query("SELECT id, nombre FROM grados ORDER BY id ASC");
+$grados_lista = [];
+if ($grados) {
+    while ($g = $grados->fetch_assoc()) {
+        $grados_lista[] = $g;
+    }
+}
+
+$filtro_grado = isset($_GET['grado']) ? intval($_GET['grado']) : 0;
+$where = "";
+if ($filtro_grado > 0) {
+    $where = "WHERE estudiantes.grado_id = " . $filtro_grado;
+} elseif ($filtro_grado === -1) {
+    $where = "WHERE estudiantes.grado_id IS NULL";
+}
+
 $sql = "SELECT 
             estudiantes.id AS estudiante_id,
             estudiantes.grado_id,
@@ -16,17 +32,10 @@ $sql = "SELECT
         FROM estudiantes
         INNER JOIN usuarios ON estudiantes.usuario_id = usuarios.id
         LEFT JOIN grados ON grados.id = estudiantes.grado_id
+        $where
         ORDER BY estudiantes.id DESC";
 
 $resultado = $conexion->query($sql);
-
-$grados = $conexion->query("SELECT id, nombre FROM grados ORDER BY id ASC");
-$grados_lista = [];
-if ($grados) {
-    while ($g = $grados->fetch_assoc()) {
-        $grados_lista[] = $g;
-    }
-}
 
 $page_title = "Estudiantes - R.M CLASS ACADEMY";
 require_once 'includes/header.php';
@@ -44,6 +53,18 @@ require_once 'includes/header.php';
         <section class="tabla-contenedor">
             <div class="tabla-header">
                 <h2>Lista de estudiantes</h2>
+                <form method="GET" action="estudiante.php" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <label style="font-weight:800; color:var(--color-primary);">Filtrar por grado</label>
+                    <select name="grado" onchange="this.form.submit()" style="min-width:240px;">
+                        <option value="0" <?php echo $filtro_grado === 0 ? 'selected' : ''; ?>>Todos</option>
+                        <option value="-1" <?php echo $filtro_grado === -1 ? 'selected' : ''; ?>>Sin grado</option>
+                        <?php foreach ($grados_lista as $g) { ?>
+                            <option value="<?php echo intval($g['id']); ?>" <?php echo $filtro_grado === intval($g['id']) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($g['nombre']); ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </form>
             </div>
 
             <div class="tabla-responsive">
@@ -71,19 +92,11 @@ require_once 'includes/header.php';
                                     <td><?php echo htmlspecialchars($fila['matricula'] ?? ''); ?></td>
                                     <td><?php echo htmlspecialchars($fila['grado_nombre'] ?? 'Sin grado'); ?></td>
                                     <td>
-                                        <form action="procesar_estudiante.php" method="POST" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                                            <input type="hidden" name="accion" value="asignar_grado">
-                                            <input type="hidden" name="estudiante_id" value="<?php echo intval($fila['estudiante_id']); ?>">
-                                            <select name="grado_id" required style="min-width:220px;">
-                                                <option value="">Seleccione...</option>
-                                                <?php foreach ($grados_lista as $g) { ?>
-                                                    <option value="<?php echo intval($g['id']); ?>" <?php echo intval($fila['grado_id']) === intval($g['id']) ? 'selected' : ''; ?>>
-                                                        <?php echo htmlspecialchars($g['nombre']); ?>
-                                                    </option>
-                                                <?php } ?>
-                                            </select>
-                                            <button type="submit" class="btn-pequeno btn-editar">Guardar</button>
-                                        </form>
+                                        <button
+                                            type="button"
+                                            class="btn-pequeno btn-editar"
+                                            onclick="abrirEditarGrado(<?php echo intval($fila['estudiante_id']); ?>, <?php echo $fila['grado_id'] === null ? 'null' : intval($fila['grado_id']); ?>)"
+                                        >Editar</button>
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -101,4 +114,42 @@ require_once 'includes/header.php';
     </main>
 </div>
 
+<div class="modal" id="modalEditarGrado" aria-hidden="true">
+    <div class="modal-content">
+        <span class="close-btn" onclick="cerrarEditarGrado()">&times;</span>
+        <h2>Asignar grado</h2>
+        <form action="procesar_estudiante.php" method="POST">
+            <input type="hidden" name="accion" value="asignar_grado">
+            <input type="hidden" name="estudiante_id" id="edit_estudiante_id" value="">
+            <div class="grupo-form">
+                <label>Grado</label>
+                <select name="grado_id" id="edit_grado_id" required>
+                    <option value="0">Sin grado</option>
+                    <?php foreach ($grados_lista as $g) { ?>
+                        <option value="<?php echo intval($g['id']); ?>"><?php echo htmlspecialchars($g['nombre']); ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+            <button type="submit" class="btn-guardar" style="width:100%;">Guardar</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function abrirEditarGrado(estudianteId, gradoId) {
+        document.getElementById('edit_estudiante_id').value = estudianteId;
+        const sel = document.getElementById('edit_grado_id');
+        sel.value = (gradoId === null) ? "0" : String(gradoId);
+        const modal = document.getElementById('modalEditarGrado');
+        modal.classList.add('activo');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+    function cerrarEditarGrado() {
+        const modal = document.getElementById('modalEditarGrado');
+        modal.classList.remove('activo');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+</script>
+
 <?php require_once 'includes/footer.php'; ?>
+

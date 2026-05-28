@@ -75,7 +75,7 @@ function textoEstadoDetalle($estado) {
     } elseif ($estado == "Rechazada") {
         return "No aprobada";
     } else {
-        return "Pendiente / En revisiÃ³n";
+        return "Pendiente / En revisión";
     }
 }
 ?>
@@ -254,7 +254,7 @@ function textoEstadoDetalle($estado) {
 
         <section class="header">
             <h1>Revisar excusa</h1>
-            <p>Consulta los detalles enviados por el tutor, define el resultado y envÃ­a una respuesta oficial.</p>
+            <p>Consulta los detalles enviados por el tutor, define el resultado y envía una respuesta oficial.</p>
         </section>
 
         <?php if ($mensaje != "") { ?>
@@ -266,7 +266,7 @@ function textoEstadoDetalle($estado) {
         <div class="detalle-grid">
 
             <section class="detalle-panel">
-                <h2>InformaciÃ³n de la excusa</h2>
+                <h2>Información de la excusa</h2>
 
                 <div class="detalle-item">
                     <label>Estado actual</label>
@@ -302,7 +302,7 @@ function textoEstadoDetalle($estado) {
                 </div>
 
                 <div class="detalle-item">
-                    <label>DescripciÃ³n</label>
+                    <label>Descripción</label>
                     <p><?php echo nl2br(htmlspecialchars($excusa['descripcion'])); ?></p>
                 </div>
 
@@ -316,7 +316,7 @@ function textoEstadoDetalle($estado) {
                             Ver evidencia
                         </a>
                     <?php } else { ?>
-                        <p>No se adjuntÃ³ evidencia.</p>
+                        <p>No se adjuntó evidencia.</p>
                     <?php } ?>
                 </div>
             </section>
@@ -339,7 +339,7 @@ function textoEstadoDetalle($estado) {
                 </div>
 
                 <div class="detalle-item">
-                    <label>TelÃ©fono</label>
+                    <label>Teléfono</label>
                     <p>
                         <?php 
                             echo !empty($excusa['tutor_telefono']) 
@@ -350,13 +350,13 @@ function textoEstadoDetalle($estado) {
                 </div>
 
                 <div class="detalle-item">
-                    <label>Fecha de envÃ­o</label>
+                    <label>Fecha de envío</label>
                     <p><?php echo date("d/m/Y h:i A", strtotime($excusa['fecha_envio'])); ?></p>
                 </div>
 
                 <?php if (!empty($excusa['fecha_revision'])) { ?>
                     <div class="detalle-item">
-                        <label>Fecha de revisiÃ³n</label>
+                        <label>Fecha de revisión</label>
                         <p><?php echo date("d/m/Y h:i A", strtotime($excusa['fecha_revision'])); ?></p>
                     </div>
                 <?php } ?>
@@ -366,8 +366,8 @@ function textoEstadoDetalle($estado) {
                 <h2>Responder al tutor</h2>
 
                 <div class="aviso-respuesta">
-                    Esta respuesta serÃ¡ visible para el tutor en su panel de excusas. 
-                    Selecciona si la excusa queda aprobada, no aprobada o pendiente en revisiÃ³n.
+                    Esta respuesta será visible para el tutor en su panel de excusas. 
+                    Selecciona si la excusa queda aprobada, no aprobada o pendiente en revisión.
                 </div>
 
                 <form action="ver_excusa.php?id=<?php echo $id; ?>" method="POST" class="form-revision">
@@ -376,7 +376,7 @@ function textoEstadoDetalle($estado) {
                         <label>Resultado de la excusa</label>
                         <select name="estado" required>
                             <option value="Pendiente" <?php if ($excusa['estado'] == "Pendiente") echo "selected"; ?>>
-                                Pendiente / En revisiÃ³n
+                                Pendiente / En revisión
                             </option>
 
                             <option value="Aprobada" <?php if ($excusa['estado'] == "Aprobada") echo "selected"; ?>>
@@ -391,7 +391,7 @@ function textoEstadoDetalle($estado) {
 
                     <div class="grupo-form">
                         <label>Respuesta para el tutor</label>
-                        <textarea name="respuesta_admin" placeholder="Escriba aquÃ­ la respuesta oficial para el tutor..."><?php echo htmlspecialchars($excusa['respuesta_admin'] ?? ''); ?></textarea>
+                        <textarea name="respuesta_admin" placeholder="Escriba aquí la respuesta oficial para el tutor..."><?php echo htmlspecialchars($excusa['respuesta_admin'] ?? ''); ?></textarea>
                     </div>
 
                     <button type="submit" class="btn-guardar">

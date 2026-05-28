@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once "auth.php";
 require_once "conexion.php";
 
@@ -17,7 +17,7 @@ if (isset($_GET['exito'])) {
 if (isset($_GET['error'])) {
     if ($_GET['error'] === 'correo_existe') $mensaje_error = "El correo ya está registrado para otro usuario.";
     if ($_GET['error'] === 'db') $mensaje_error = "Ocurrió un error en la base de datos.";
-    if ($_GET['error'] === 'clave') $mensaje_error = "Las contraseñas no coinciden.";
+    if ($_GET['error'] === 'clave') $mensaje_error = "La contraseña no es válida o no coincide.";
 }
 
 $sql = "SELECT usuarios.* FROM usuarios JOIN roles ON usuarios.rol_id = roles.id WHERE roles.nombre = 'admin' ORDER BY usuarios.nombre ASC";
@@ -99,6 +99,7 @@ require_once 'includes/header.php';
             <div class="grupo-form"><label>Nombre Completo</label><input type="text" name="nombre" required></div>
             <div class="grupo-form"><label>Correo Electrónico</label><input type="email" name="correo" required></div>
             <div class="grupo-form"><label>Contraseña</label><input type="password" name="clave" required minlength="8"></div>
+<div class="grupo-form"><label>Confirmar contraseña</label><input type="password" name="clave_confirm" required minlength="8"></div>
             <button type="submit" class="btn-guardar" style="width:100%">Guardar</button>
         </form>
     </div>
@@ -114,6 +115,7 @@ require_once 'includes/header.php';
             <div class="grupo-form"><label>Nombre Completo</label><input type="text" name="nombre" id="edit_nombre" required></div>
             <div class="grupo-form"><label>Correo Electrónico</label><input type="email" name="correo" id="edit_correo" required></div>
             <div class="grupo-form"><label>Nueva Contraseña (Opcional)</label><input type="password" name="clave" minlength="8" placeholder="Dejar en blanco para mantener actual"></div>
+<div class="grupo-form"><label>Confirmar nueva contraseña</label><input type="password" name="clave_confirm" minlength="8" placeholder="Repite la contraseña nueva"></div>
             <button type="submit" class="btn-guardar" style="width:100%">Actualizar</button>
         </form>
     </div>
@@ -131,3 +133,5 @@ require_once 'includes/header.php';
 </script>
 
 <?php require_once 'includes/footer.php'; ?>
+
+

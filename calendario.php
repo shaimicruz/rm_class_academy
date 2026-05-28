@@ -158,7 +158,7 @@ $result_eventos = $conexion->query($sql_eventos);
                 </div>
 
                 <div class="grupo-form">
-                    <label>Ã‚¿Para quién es el evento?</label>
+                    <label>¿Para quién es el evento?</label>
                     <select name="tipo_destino" id="tipo_destino" onchange="mostrarGrados()" required>
                         <option value="todos">Para todos los estudiantes</option>
                         <option value="grado">Para un grado específico</option>
@@ -253,7 +253,7 @@ $result_eventos = $conexion->query($sql_eventos);
 
                                         <a href="eliminar_evento.php?id=<?php echo $evento['id']; ?>" 
                                            class="btn-eliminar"
-                                           onclick="return confirm('Ã‚¿Seguro que quieres eliminar este evento?');">
+                                           onclick="return confirm('¿Seguro que quieres eliminar este evento?');">
                                             Eliminar
                                         </a>
                                     </td>

@@ -74,7 +74,7 @@ function textoEstado($estado) {
     } elseif ($estado == "Rechazada") {
         return "No aprobada";
     } else {
-        return "Pendiente / En revisiÃ³n";
+        return "Pendiente / En revisión";
     }
 }
 
@@ -88,7 +88,7 @@ function clasificarDia($fecha_envio) {
     } elseif ($fecha == $ayer) {
         return "Ayer";
     } elseif (strtotime($fecha_envio) >= strtotime("-7 days")) {
-        return "Ãšltimos 7 dÃ­as";
+        return "Últimos 7 días";
     } else {
         return "Antigua";
     }
@@ -101,7 +101,7 @@ function claseClasificacion($fecha_envio) {
         return "clasificacion hoy";
     } elseif ($clasificacion == "Ayer") {
         return "clasificacion ayer";
-    } elseif ($clasificacion == "Ãšltimos 7 dÃ­as") {
+    } elseif ($clasificacion == "Últimos 7 días") {
         return "clasificacion semana";
     } else {
         return "clasificacion antigua";
@@ -274,7 +274,7 @@ function claseClasificacion($fecha_envio) {
 <main class="contenido">
 
         <section class="header">
-            <h1>GestiÃ³n de excusas</h1>
+            <h1>Gestión de excusas</h1>
             <p>
                 Desde este panel la profesora puede revisar las excusas enviadas por los tutores,
                 buscar por curso, clasificarlas por fecha, ver evidencias y responder solicitudes.
@@ -283,7 +283,7 @@ function claseClasificacion($fecha_envio) {
 
         <section class="busqueda-excusas">
             <h2>Buscar y clasificar excusas</h2>
-            <p>Filtra las excusas por curso o por fecha de envÃ­o: hoy, ayer, Ãºltimos 7 dÃ­as o antiguas.</p>
+            <p>Filtra las excusas por curso o por fecha de envio: hoy, ayer, ultimos 7 dias o antiguas.</p>
 
             <form action="excusas.php" method="GET" class="busqueda-fila">
                 <input 
@@ -297,7 +297,7 @@ function claseClasificacion($fecha_envio) {
                     <option value="todas" <?php if ($filtro_dia == "todas") echo "selected"; ?>>Todas</option>
                     <option value="hoy" <?php if ($filtro_dia == "hoy") echo "selected"; ?>>Hoy</option>
                     <option value="ayer" <?php if ($filtro_dia == "ayer") echo "selected"; ?>>Ayer</option>
-                    <option value="semana" <?php if ($filtro_dia == "semana") echo "selected"; ?>>Ãšltimos 7 dÃ­as</option>
+                    <option value="semana" <?php if ($filtro_dia == "semana") echo "selected"; ?>>ultimos 7 dias</option>
                     <option value="antiguas" <?php if ($filtro_dia == "antiguas") echo "selected"; ?>>Antiguas</option>
                 </select>
 
@@ -326,7 +326,7 @@ function claseClasificacion($fecha_envio) {
                             <th>Motivo</th>
                             <th>Tutor</th>
                             <th>Estado</th>
-                            <th>ClasificaciÃ³n</th>
+                            <th>Clasificación</th>
                             <th>Enviada</th>
                             <th>Acciones</th>
                         </tr>
@@ -384,7 +384,7 @@ function claseClasificacion($fecha_envio) {
 
                                             <a href="eliminar_excusa.php?id=<?php echo $excusa['id']; ?>" 
                                                class="btn-eliminar"
-                                               onclick="return confirm('Ã‚¿Seguro que quieres eliminar esta excusa?');">
+                                               onclick="return confirm('¿Seguro que quieres eliminar esta excusa?');">
                                                 Eliminar
                                             </a>
                                         </div>

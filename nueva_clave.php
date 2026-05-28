@@ -62,11 +62,11 @@ if (!isset($_SESSION['codigo_verificado']) || $_SESSION['codigo_verificado'] !==
                 </div>
 
                 <div class="grupo">
-                    <label for="confirmar_clave">Confirmar ContraseÃ±a</label>
+                    <label for="confirmar_clave">Confirmar Contraseña</label>
                     <input type="password" id="confirmar_clave" name="confirmar_clave" required>
                 </div>
 
-                <button type="submit" class="btn-principal">Guardar ContraseÃ±a</button>
+                <button type="submit" class="btn-principal">Guardar Contraseña</button>
             </form>
         </section>
     </main>

@@ -20,6 +20,7 @@ if ($accion == 'crear') {
     $nombre = trim($_POST['nombre']);
     $correo = trim($_POST['correo']);
     $clave = $_POST['clave'];
+    $clave_confirm = $_POST['clave_confirm'] ?? '';
 
     // Check if email exists
     $sql_check = "SELECT id FROM usuarios WHERE correo = ?";
@@ -31,7 +32,7 @@ if ($accion == 'crear') {
         exit();
     }
 
-    if (!claveSegura($clave)) {
+    if ($clave !== $clave_confirm || !claveSegura($clave)) {
         header("Location: profesores.php?error=clave");
         exit();
     }
@@ -56,6 +57,7 @@ if ($accion == 'crear') {
     $nombre = trim($_POST['nombre']);
     $correo = trim($_POST['correo']);
     $clave = $_POST['clave'];
+    $clave_confirm = $_POST['clave_confirm'] ?? '';
 
     // Check if email exists for other users
     $sql_check = "SELECT id FROM usuarios WHERE correo = ? AND id != ?";
@@ -68,7 +70,7 @@ if ($accion == 'crear') {
     }
 
     if (!empty($clave)) {
-        if (!claveSegura($clave)) {
+        if ($clave !== $clave_confirm || !claveSegura($clave)) {
             header("Location: profesores.php?error=clave");
             exit();
         }
