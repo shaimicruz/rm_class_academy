@@ -21,7 +21,8 @@ if (!isset($_SESSION['codigo_verificado']) || $_SESSION['codigo_verificado'] !==
                 mayuscula: /[A-Z]/.test(clave),
                 minuscula: /[a-z]/.test(clave),
                 numero: /[0-9]/.test(clave),
-                especial: /[\\W_]/.test(clave),
+                // Caracter especial: cualquier no-alfanumerico o underscore.
+                especial: /[\W_]/.test(clave),
             };
         }
 
