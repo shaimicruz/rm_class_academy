@@ -4,6 +4,7 @@ Thumbs.db
 
 # Local env / secrets
 db_local.php
+brevo_config.php
 *.env
 
 # Uploads / generated content

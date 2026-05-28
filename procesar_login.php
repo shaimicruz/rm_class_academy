@@ -23,6 +23,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $usuario = $resultado->fetch_assoc();
 
+        // Bloquea inicio de sesión si el correo no está verificado (si existe la columna).
+        $col = $conexion->query("SHOW COLUMNS FROM usuarios LIKE 'email_verificado'");
+        if ($col && $col->num_rows === 1) {
+            $emailVer = intval($usuario['email_verificado'] ?? 0);
+            if ($emailVer !== 1) {
+                $_SESSION['correo_verificacion'] = $usuario['correo'];
+                header("Location: verificar_codigo_registro.php?pendiente=1");
+                exit();
+            }
+        }
+
         if ($usuario['estado'] == 'pendiente') {
             header("Location: index.php?error_pendiente=1");
             exit();

@@ -2,6 +2,7 @@
 session_start();
 require_once "conexion.php";
 require_once "includes/schema_helpers.php";
+require_once "includes/brevo_mailer.php";
 
 if ($_SERVER["REQUEST_METHOD"] != "POST") {
     header("Location: index.php");
@@ -111,6 +112,28 @@ if (!$stmt->execute()) {
 
 $usuario_id = intval($stmt->insert_id);
 
+// Verificación por correo (Brevo): crea y envía un código de 6 dígitos.
+$col = $conexion->query("SHOW COLUMNS FROM usuarios LIKE 'email_verificado'");
+if ($col && $col->num_rows === 0) {
+    // InfinityFree/MySQL: asegurar la columna sin depender de una migración manual.
+    $conexion->query("ALTER TABLE usuarios ADD COLUMN email_verificado TINYINT(1) NOT NULL DEFAULT 0");
+}
+
+$codigo_ver = sprintf("%06d", mt_rand(1, 999999));
+$stmtVer = $conexion->prepare("UPDATE usuarios SET codigo_verificacion = ?, email_verificado = 0 WHERE id = ? LIMIT 1");
+$stmtVer->bind_param("si", $codigo_ver, $usuario_id);
+$stmtVer->execute();
+
+$subject = "Código de verificación - R.M CLASS ACADEMY";
+$message = "Hola " . ($nombre ?? '') . ",\n\nTu código de verificación es: " . $codigo_ver . "\n\nIngresa este código para activar tu cuenta.";
+
+$_SESSION['correo_verificacion'] = $correo;
+$enviado = brevoSendEmail($correo, $nombre ?? '', $subject, $message);
+if (!$enviado) {
+    header("Location: verificar_codigo_registro.php?error=envio");
+    exit();
+}
+
 if ($rol_nombre === "estudiante") {
     $matricula = "EST-" . str_pad((string)$usuario_id, 4, "0", STR_PAD_LEFT);
 
@@ -131,8 +154,8 @@ if ($rol_nombre === "tutor") {
     $insertTutor->execute();
 }
 
-header("Location: index.php?registro=ok");
+// Lleva a la pantalla para ingresar el código.
+header("Location: verificar_codigo_registro.php");
 exit();
 
 ?>
-
