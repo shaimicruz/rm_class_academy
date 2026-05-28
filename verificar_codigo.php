@@ -35,7 +35,7 @@ if (!isset($_SESSION['correo_recuperacion'])) {
             <form class="formulario activo" action="procesar_codigo.php" method="POST">
                 <h2>Ingresa tu código</h2>
                 <p>Hemos enviado un código de 6 dígitos a <strong><?php echo htmlspecialchars($_SESSION['correo_recuperacion']); ?></strong>.</p>
-                <p style="font-size: 12px; color: var(--dorado);"><em>(Si pruebas en entorno local, revisa el archivo ultimo_codigo_recuperacion.txt en la carpeta del proyecto)</em></p>
+
 
                 <div class="grupo">
                     <label for="codigo">Código de 6 dígitos</label>

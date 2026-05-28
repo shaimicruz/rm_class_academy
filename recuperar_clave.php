@@ -37,19 +37,7 @@ session_start();
                     <input type="email" id="correo" name="correo" placeholder="ejemplo@correo.com" required>
                 </div>
 
-                <div class="grupo">
-                    <label>Método de envío</label>
-                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <label style="display:flex; align-items:center; gap:8px; font-weight:700;">
-                            <input type="radio" name="modo_envio" value="brevo" checked>
-                            Correo real (Brevo)
-                        </label>
-                        <label style="display:flex; align-items:center; gap:8px; font-weight:700;">
-                            <input type="radio" name="modo_envio" value="txt">
-                            Demo local (TXT)
-                        </label>
-                    </div>
-                </div>
+
 
                 <button type="submit" class="btn-principal">Enviar código</button>
 

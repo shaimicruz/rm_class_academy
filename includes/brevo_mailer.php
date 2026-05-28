@@ -25,7 +25,7 @@ function brevoConfig(): array
     return $cfg;
 }
 
-function brevoSendEmail(string $toEmail, string $toName, string $subject, string $textContent): bool
+function brevoSendEmail(string $toEmail, string $toName, string $subject, string $htmlContent): bool
 {
     $cfg = brevoConfig();
     if (empty($cfg["api_key"])) return false;
@@ -34,7 +34,7 @@ function brevoSendEmail(string $toEmail, string $toName, string $subject, string
         "sender" => ["email" => $cfg["from_email"], "name" => $cfg["from_name"]],
         "to" => [["email" => $toEmail, "name" => $toName]],
         "subject" => $subject,
-        "textContent" => $textContent,
+        "htmlContent" => $htmlContent,
     ]);
 
     if ($payload === false) return false;

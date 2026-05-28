@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 
 if (isset($_SESSION['usuario_id'])) {
@@ -109,10 +109,6 @@ if (isset($_SESSION['usuario_id'])) {
                 <div class="nota" style="margin-top: 15px;">
                     <a href="recuperar_clave.php" style="color: var(--azul-oscuro); font-weight: 600; text-decoration: none;">¿Olvidaste tu contraseña?</a>
                 </div>
-
-                <div class="nota">
-                    La cuenta de profesora es única y no se crea desde registro.
-                </div>
             </form>
 
             <form class="formulario" id="registro" action="registrar.php" method="POST">
@@ -198,10 +194,6 @@ if (isset($_SESSION['usuario_id'])) {
                 </div>
 
                 <button type="submit" class="btn-principal">Crear mi cuenta</button>
-
-                <div class="nota">
-                    Por seguridad, nadie puede registrarse como profesora/admin.
-                </div>
             </form>
 
         </section>
