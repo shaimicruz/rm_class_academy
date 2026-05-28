@@ -8,6 +8,7 @@ $nombre_usuario = trim((string)($_SESSION['nombre'] ?? 'Usuario'));
 $foto_perfil = '';
 $foto_perfil_url = '';
 $classroom_label = 'Sin grado';
+$matricula_label = '';
 
 function esActivo($paginas, $actual) {
     $paginas = is_array($paginas) ? $paginas : [$paginas];
@@ -34,7 +35,7 @@ if ($foto_perfil !== '') {
 
 if ($rol === 'estudiante' && isset($conexion) && $usuario_id > 0) {
     $stmt_grado = $conexion->prepare("
-        SELECT g.nombre
+        SELECT g.nombre, e.matricula
         FROM estudiantes e
         LEFT JOIN grados g ON g.id = e.grado_id
         WHERE e.usuario_id = ? LIMIT 1
@@ -47,6 +48,9 @@ if ($rol === 'estudiante' && isset($conexion) && $usuario_id > 0) {
             $row_grado = $res_grado->fetch_assoc();
             if (!empty($row_grado['nombre'])) {
                 $classroom_label = $row_grado['nombre'];
+            }
+            if (!empty($row_grado['matricula'])) {
+                $matricula_label = (string)$row_grado['matricula'];
             }
         }
     }
@@ -89,6 +93,9 @@ if ($rol === 'estudiante' && isset($conexion) && $usuario_id > 0) {
         <div class="user-meta">
             <strong><?php echo htmlspecialchars($nombre_usuario); ?></strong>
             <small><?php echo htmlspecialchars(ucfirst($rol)); ?></small>
+            <?php if ($rol === 'estudiante' && $matricula_label !== ''): ?>
+                <small>Matrícula: <?php echo htmlspecialchars($matricula_label); ?></small>
+            <?php endif; ?>
             <small>Grado: <?php echo htmlspecialchars($classroom_label); ?></small>
         </div>
     </div>
@@ -129,4 +136,3 @@ if ($rol === 'estudiante' && isset($conexion) && $usuario_id > 0) {
         <?php endif; ?>
     </nav>
 </aside>
-
