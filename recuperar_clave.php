@@ -15,22 +15,17 @@ session_start();
         <section class="panel-formulario">
             <div class="logo-area-minimalista">
                 <a href="index.php" aria-label="Ir al inicio">
-                    <span class="logo-imagen logo-marca" aria-hidden="true">RM</span>
+                    <img class="logo-imagen" src="assets/logo.png" alt="R.M CLASS ACADEMY">
                 </a>
-                <h1>R.M CLASS ACADEMY</h1>
-                <p>Recuperación de Contraseña</p>
+                <p class="sr-only">R.M CLASS ACADEMY</p>
             </div>
 
-            <?php if (isset($_GET['error']) && $_GET['error'] == 'correo') { ?>
-                <div class="mensaje-error">
-                    El correo ingresado no está registrado en el sistema.
-                </div>
+            <?php if (isset($_GET['error']) && $_GET['error'] === 'correo') { ?>
+                <div class="mensaje-error">El correo ingresado no está registrado en el sistema.</div>
             <?php } ?>
 
-            <?php if (isset($_GET['error']) && $_GET['error'] == 'envio') { ?>
-                <div class="mensaje-error">
-                    Hubo un problema enviando el correo. Inténtalo de nuevo más tarde.
-                </div>
+            <?php if (isset($_GET['error']) && $_GET['error'] === 'envio') { ?>
+                <div class="mensaje-error">Hubo un problema enviando el correo. Inténtalo de nuevo más tarde.</div>
             <?php } ?>
 
             <form class="formulario activo" action="enviar_codigo.php" method="POST">
@@ -42,8 +37,22 @@ session_start();
                     <input type="email" id="correo" name="correo" placeholder="ejemplo@correo.com" required>
                 </div>
 
+                <div class="grupo">
+                    <label>Método de envío</label>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <label style="display:flex; align-items:center; gap:8px; font-weight:700;">
+                            <input type="radio" name="modo_envio" value="brevo" checked>
+                            Correo real (Brevo)
+                        </label>
+                        <label style="display:flex; align-items:center; gap:8px; font-weight:700;">
+                            <input type="radio" name="modo_envio" value="txt">
+                            Demo local (TXT)
+                        </label>
+                    </div>
+                </div>
+
                 <button type="submit" class="btn-principal">Enviar código</button>
-                
+
                 <div class="nota" style="margin-top: 20px;">
                     <a href="index.php" style="color: var(--azul-oscuro); font-weight: 600; text-decoration: none;">Volver al inicio</a>
                 </div>
@@ -52,3 +61,4 @@ session_start();
     </main>
 </body>
 </html>
+

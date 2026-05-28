@@ -16,15 +16,31 @@ function claveSegura(string $clave): bool
         && preg_match('/[\W_]/', $clave);
 }
 
-if ($accion == 'crear') {
-    $nombre = trim($_POST['nombre']);
-    $correo = trim($_POST['correo']);
-    $clave = $_POST['clave'];
-    $clave_confirm = $_POST['clave_confirm'] ?? '';
+function rolId(mysqli $conexion, string $nombreRol): ?int
+{
+    $stmt = $conexion->prepare("SELECT id FROM roles WHERE nombre = ? LIMIT 1");
+    if (!$stmt) return null;
+    $stmt->bind_param("s", $nombreRol);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    if (!$res || $res->num_rows !== 1) return null;
+    $row = $res->fetch_assoc();
+    return intval($row['id']);
+}
+
+if ($accion === 'crear') {
+    $nombre = trim($_POST['nombre'] ?? '');
+    $correo = trim($_POST['correo'] ?? '');
+    $clave = (string)($_POST['clave'] ?? '');
+    $clave_confirm = (string)($_POST['clave_confirm'] ?? '');
+    $rol_objetivo = trim($_POST['rol'] ?? 'profesor'); // profesor | admin
+
+    if ($rol_objetivo !== 'profesor' && $rol_objetivo !== 'admin') {
+        $rol_objetivo = 'profesor';
+    }
 
     // Check if email exists
-    $sql_check = "SELECT id FROM usuarios WHERE correo = ?";
-    $stmt_check = $conexion->prepare($sql_check);
+    $stmt_check = $conexion->prepare("SELECT id FROM usuarios WHERE correo = ? LIMIT 1");
     $stmt_check->bind_param("s", $correo);
     $stmt_check->execute();
     if ($stmt_check->get_result()->num_rows > 0) {
@@ -37,13 +53,21 @@ if ($accion == 'crear') {
         exit();
     }
 
-    $hash = password_hash($clave, PASSWORD_DEFAULT);
-    $rol = 'admin';
-    $estado = 'activo';
+    $rol_id = rolId($conexion, $rol_objetivo);
+    if (!$rol_id) {
+        header("Location: profesores.php?error=db");
+        exit();
+    }
 
-    $sql = "INSERT INTO usuarios (nombre, correo, clave, rol, estado) VALUES (?, ?, ?, ?, ?)";
+    $hash = password_hash($clave, PASSWORD_DEFAULT);
+    $estado = 'activo';
+    $apellido = '';
+    $telefono = '';
+
+    $sql = "INSERT INTO usuarios (nombre, apellido, correo, clave, telefono, rol_id, estado)
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("sssss", $nombre, $correo, $hash, $rol, $estado);
+    $stmt->bind_param("sssssis", $nombre, $apellido, $correo, $hash, $telefono, $rol_id, $estado);
 
     if ($stmt->execute()) {
         header("Location: profesores.php?exito=creado");
@@ -51,21 +75,32 @@ if ($accion == 'crear') {
         header("Location: profesores.php?error=db");
     }
     exit();
+}
 
-} elseif ($accion == 'editar') {
-    $id = intval($_POST['id']);
-    $nombre = trim($_POST['nombre']);
-    $correo = trim($_POST['correo']);
-    $clave = $_POST['clave'];
-    $clave_confirm = $_POST['clave_confirm'] ?? '';
+if ($accion === 'editar') {
+    $id = intval($_POST['id'] ?? 0);
+    $nombre = trim($_POST['nombre'] ?? '');
+    $correo = trim($_POST['correo'] ?? '');
+    $clave = (string)($_POST['clave'] ?? '');
+    $clave_confirm = (string)($_POST['clave_confirm'] ?? '');
+    $rol_objetivo = trim($_POST['rol'] ?? 'profesor'); // profesor | admin
+
+    if ($rol_objetivo !== 'profesor' && $rol_objetivo !== 'admin') {
+        $rol_objetivo = 'profesor';
+    }
 
     // Check if email exists for other users
-    $sql_check = "SELECT id FROM usuarios WHERE correo = ? AND id != ?";
-    $stmt_check = $conexion->prepare($sql_check);
+    $stmt_check = $conexion->prepare("SELECT id FROM usuarios WHERE correo = ? AND id != ? LIMIT 1");
     $stmt_check->bind_param("si", $correo, $id);
     $stmt_check->execute();
     if ($stmt_check->get_result()->num_rows > 0) {
         header("Location: profesores.php?error=correo_existe");
+        exit();
+    }
+
+    $rol_id = rolId($conexion, $rol_objetivo);
+    if (!$rol_id) {
+        header("Location: profesores.php?error=db");
         exit();
     }
 
@@ -75,13 +110,13 @@ if ($accion == 'crear') {
             exit();
         }
         $hash = password_hash($clave, PASSWORD_DEFAULT);
-        $sql = "UPDATE usuarios SET nombre = ?, correo = ?, clave = ? WHERE id = ?";
+        $sql = "UPDATE usuarios SET nombre = ?, correo = ?, clave = ?, rol_id = ? WHERE id = ? LIMIT 1";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("sssi", $nombre, $correo, $hash, $id);
+        $stmt->bind_param("sssii", $nombre, $correo, $hash, $rol_id, $id);
     } else {
-        $sql = "UPDATE usuarios SET nombre = ?, correo = ? WHERE id = ?";
+        $sql = "UPDATE usuarios SET nombre = ?, correo = ?, rol_id = ? WHERE id = ? LIMIT 1";
         $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("ssi", $nombre, $correo, $id);
+        $stmt->bind_param("ssii", $nombre, $correo, $rol_id, $id);
     }
 
     if ($stmt->execute()) {
@@ -90,23 +125,30 @@ if ($accion == 'crear') {
         header("Location: profesores.php?error=db");
     }
     exit();
+}
 
-} elseif ($accion == 'eliminar') {
-    $id = intval($_GET['id']);
-    
-    $sql = "DELETE FROM usuarios WHERE id = ?";
-    $stmt = $conexion->prepare($sql);
+if ($accion === 'eliminar') {
+    $id = intval($_GET['id'] ?? 0);
+    $session_user_id = intval($_SESSION['usuario_id'] ?? 0);
+
+    if ($id <= 0 || $id === $session_user_id) {
+        header("Location: profesores.php?error=db");
+        exit();
+    }
+
+    $stmt = $conexion->prepare("DELETE FROM usuarios WHERE id = ? LIMIT 1");
     $stmt->bind_param("i", $id);
-    
+
     if ($stmt->execute()) {
         header("Location: profesores.php?exito=eliminado");
     } else {
         header("Location: profesores.php?error=db");
     }
     exit();
-
-} else {
-    header("Location: profesores.php");
-    exit();
 }
+
+header("Location: profesores.php");
+exit();
+
 ?>
+
